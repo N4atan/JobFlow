@@ -33,7 +33,7 @@ export const Header = () => {
                             </div>
                         </div>
                         <ul
-                            tabIndex="-1"
+                            tabIndex={-1}
                             className="menu dropdown-content bg-base-100 rounded-box z-1 mt-3 w-52 p-2 shadow">
                             <li>
                                 <a className="link link-hover cursor-pointer">
