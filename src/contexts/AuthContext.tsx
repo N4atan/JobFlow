@@ -25,7 +25,13 @@ export function AuthContextProvider({ children }: { children: ReactNode }) {
 
     const signInWithGoogle = async () => {
         try {
-            await signInWithPopup(auth, provider);
+            const isMobile = /iPhone|iPad|iPod|Android/i.test(navigator.userAgent);
+
+            if (isMobile) {
+                signInWithRedirect(auth, provider);
+            } else {
+                signInWithPopup(auth, provider);
+            }
         } catch (error) {
             console.error("Error signing in with Google", error);
         }
