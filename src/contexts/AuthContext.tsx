@@ -18,13 +18,12 @@ export function AuthContextProvider({ children }: { children: ReactNode }) {
     const [loading, setLoading] = useState(true);
 
     useEffect(() => {
-        let isSubscribed = true;
-
-        const initializeAuth = async () => {
+        async function initAuth() {
+            setLoading(true);
             try {
-                // 1. Primeiro, tenta pegar o resultado do redirecionamento
+                // 1. Tenta capturar o resultado do redirect primeiro
                 const result = await getRedirectResult(auth);
-                if (result && isSubscribed) {
+                if (result) {
                     const credential = GoogleAuthProvider.credentialFromResult(result);
                     const token = credential?.accessToken;
                     if (token) {
@@ -35,28 +34,21 @@ export function AuthContextProvider({ children }: { children: ReactNode }) {
             } catch (error) {
                 console.error("Erro no redirect:", error);
             }
-
-            // 2. Depois (ou em paralelo), escuta a mudança de estado
+    
+            // 2. Só depois de checar o redirect, começamos a ouvir o estado
             const unsubscribe = onAuthStateChanged(auth, (currentUser) => {
-                if (isSubscribed) {
-                    setUser(currentUser);
-                    if (!currentUser) {
-                        setAccessToken(null);
-                        localStorage.removeItem("@jobflow:google-token");
-                    }
-                    setLoading(false); // Só termina o loading aqui
+                setUser(currentUser);
+                if (!currentUser) {
+                    setAccessToken(null);
+                    localStorage.removeItem("@jobflow:google-token");
                 }
+                setLoading(false); // Só libera o app aqui
             });
-
+    
             return unsubscribe;
-        };
-
-        const unsubscribePromise = initializeAuth();
-
-        return () => {
-            isSubscribed = false;
-            unsubscribePromise.then(unsubscribe => unsubscribe && unsubscribe());
-        };
+        }
+    
+        initAuth();
     }, []);
 
     const signInWithGoogle = async () => {
