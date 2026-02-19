@@ -24,6 +24,7 @@ export function AuthContextProvider({ children }: { children: ReactNode }) {
                 // 1. Tenta capturar o resultado do redirect primeiro
                 const result = await getRedirectResult(auth);
                 if (result) {
+                    alert("Login capturado com sucesso!");
                     const credential = GoogleAuthProvider.credentialFromResult(result);
                     const token = credential?.accessToken;
                     if (token) {
