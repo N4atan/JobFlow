@@ -18,31 +18,45 @@ export function AuthContextProvider({ children }: { children: ReactNode }) {
     const [loading, setLoading] = useState(true);
 
     useEffect(() => {
-        const unsubscribe = onAuthStateChanged(auth, (currentUser) => {
-            setUser(currentUser);
-            if (!currentUser) {
-                setAccessToken(null);
-                localStorage.removeItem("@jobflow:google-token");
-            }
-            setLoading(false);
-        });
-        return () => unsubscribe();
-    }, []);
+        let isSubscribed = true;
 
-    // Handle redirect result (for mobile)
-    useEffect(() => {
-        getRedirectResult(auth).then((result) => {
-            if (result) {
-                const credential = GoogleAuthProvider.credentialFromResult(result);
-                const token = credential?.accessToken;
-                if (token) {
-                    setAccessToken(token);
-                    localStorage.setItem("@jobflow:google-token", token);
+        const initializeAuth = async () => {
+            try {
+                // 1. Primeiro, tenta pegar o resultado do redirecionamento
+                const result = await getRedirectResult(auth);
+                if (result && isSubscribed) {
+                    const credential = GoogleAuthProvider.credentialFromResult(result);
+                    const token = credential?.accessToken;
+                    if (token) {
+                        setAccessToken(token);
+                        localStorage.setItem("@jobflow:google-token", token);
+                    }
                 }
+            } catch (error) {
+                console.error("Erro no redirect:", error);
             }
-        }).catch((error) => {
-            console.error("Error getting redirect result", error);
-        });
+
+            // 2. Depois (ou em paralelo), escuta a mudança de estado
+            const unsubscribe = onAuthStateChanged(auth, (currentUser) => {
+                if (isSubscribed) {
+                    setUser(currentUser);
+                    if (!currentUser) {
+                        setAccessToken(null);
+                        localStorage.removeItem("@jobflow:google-token");
+                    }
+                    setLoading(false); // Só termina o loading aqui
+                }
+            });
+
+            return unsubscribe;
+        };
+
+        const unsubscribePromise = initializeAuth();
+
+        return () => {
+            isSubscribed = false;
+            unsubscribePromise.then(unsubscribe => unsubscribe && unsubscribe());
+        };
     }, []);
 
     const signInWithGoogle = async () => {
