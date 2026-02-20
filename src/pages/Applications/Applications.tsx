@@ -8,8 +8,8 @@ import { getApiKey } from "../../services/gemini";
 
 
 
-export function Applications() {
-    const { user, accessToken } = useAuth();
+export function PageApplications() {
+    const { accessToken } = useAuth();
     const [jobs, setJobs] = useState([]);
     const [nextPageToken, setNextPageToken] = useState<string | null>(null);
     const [loading, setLoading] = useState(false);
@@ -46,31 +46,23 @@ export function Applications() {
         }
     }
 
+    if (!getApiKey()) {
+        return (
+            <div className="flex items-center justify-center h-screen p-4 lg:p-10">
+                <div className="text-center">
+                    <h1 className="text-2xl font-bold">Você precisa adicionar uma chave de API para acessar esta página</h1>
+                    <p className="text-gray-600">Quase lá! Para habilitar o processamento por IA, clique na sua foto de perfil no canto superior direito e selecione a opção 'Gemini'. Lá, você poderá colar sua chave e desbloquear todas as funcionalidades do Job-Flow</p>
+                </div>
+            </div>
+        )
+    }
+
     useEffect(() => {
         loadData(true);
     }, [accessToken]);
 
-    if (!user || !accessToken) {
-        return (
-            <div className="flex items-center justify-center h-screen">
-                <div className="text-center">
-                    <h1 className="text-2xl font-bold">Você precisa estar logado para acessar esta página</h1>
-                    <p className="text-gray-600">Faça login para continuar</p>
-                </div>
-            </div>
-        )
-    }
 
-    if (!getApiKey()) {
-        return (
-            <div className="flex items-center justify-center h-screen">
-                <div className="text-center">
-                    <h1 className="text-2xl font-bold">Você precisa adicionar uma chave de API para acessar esta página</h1>
-                    <p className="text-gray-600">Adicione sua chave de API para continuar</p>
-                </div>
-            </div>
-        )
-    }
+    
 
     return (
         <>

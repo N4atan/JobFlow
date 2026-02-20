@@ -7,4 +7,14 @@ export default defineConfig({
     react(),
     tailwindcss()
   ],
+  server: {
+    proxy: {
+      '/__': {
+        target: 'https://job-flow-06.firebaseapp.com',
+        changeOrigin: true,
+      }
+    }
+  }
 });
+
+
