@@ -48,12 +48,55 @@ export function PageApplications() {
 
     if (!getApiKey()) {
         return (
-            <div className="flex items-center justify-center h-screen p-4 lg:p-10">
-                <div className="text-center">
-                    <h1 className="text-2xl font-bold">Você precisa adicionar uma chave de API para acessar esta página</h1>
-                    <p className="text-gray-600">Quase lá! Para habilitar o processamento por IA, clique na sua foto de perfil no canto superior direito e selecione a opção 'Gemini'. Lá, você poderá colar sua chave e desbloquear todas as funcionalidades do Job-Flow</p>
+            <div className="card bg-base-100 w-96 shadow-sm mx-auto my-10">
+                <div className="card-body">
+                    <h1 className="card-title">Você precisa adicionar uma chave de API para acessar esta página</h1>
+
+                    <ul className="steps steps-vertical ">
+                        {/* PASSO 1 */}
+                        <li className="step step-primary">
+                            <div className="text-left w-full pl-4 py-2">
+                                <span className="font-bold">Acesse o link</span>
+                                <p className="text-sm">Vá para o <a href="https://aistudio.google.com/app/apikey" target="_blank" className="link link-primary font-semibold">Google AI Studio (API Keys)</a>.</p>
+                            </div>
+                        </li>
+
+                        {/* PASSO 2 */}
+                        <li className="step step-primary">
+                            <div className="text-left w-full pl-4 py-2">
+                                <span className="font-bold">Faça Login</span>
+                                <p className="text-sm">Entre com a mesma conta Google que você está usando no projeto.</p>
+                            </div>
+                        </li>
+
+                        {/* PASSO 3 */}
+                        <li className="step step-primary">
+                            <div className="text-left w-full pl-4 py-2">
+                                <span className="font-bold">Crie a Chave</span>
+                                <p className="text-sm">Clique no botão <span className="badge badge-outline font-bold">"Create API key"</span>.</p>
+                                <p className="text-xs italic opacity-60">Escolha a opção "Create API key in new project" para isolar as configurações.</p>
+                            </div>
+                        </li>
+
+                        {/* PASSO 4 */}
+                        <li className="step step-primary">
+                            <div className="text-left w-full pl-4 py-2">
+                                <span className="font-bold">Copie o Código</span>
+                                <p className="text-sm">Copie a sequência que começa com <code className="bg-base-300 px-1 rounded">AIza...</code> e guarde em segurança.</p>
+                            </div>
+                        </li>
+
+                        {/* PASSO 5 */}
+                        <li className="step">
+                            <div className="text-left w-full pl-4 py-2">
+                                <span className="font-bold text-primary">Ative no JobFlow</span>
+                                <p className="text-sm">Clique na sua <span className="font-semibold">foto de perfil</span> (topo direito), selecione <span className="font-semibold">"Chave Gemini"</span> e cole o código.</p>
+                            </div>
+                        </li>
+                    </ul>
                 </div>
             </div>
+
         )
     }
 
@@ -62,7 +105,7 @@ export function PageApplications() {
     }, [accessToken]);
 
 
-    
+
 
     return (
         <>
