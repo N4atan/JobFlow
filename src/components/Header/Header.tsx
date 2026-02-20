@@ -42,7 +42,7 @@ export const Header = () => {
                             <li>
                                 <a className="link link-hover cursor-pointer" onClick={() => setIsSettingsOpen(true)}>
                                     <FontAwesomeIcon icon={faGear} />
-                                    Geimini
+                                    Gemini
                                 </a>
                             </li>
 
