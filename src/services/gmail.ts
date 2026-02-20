@@ -22,64 +22,65 @@ const q = '(' +
 const baseThreadsUrl = 'https://gmail.googleapis.com/gmail/v1/users/me/threads';
 
 export const fetchJobApplications = async (token: string, maxResults: number, pageToken?: string | null) => {
-    console.clear();
+    try {
+        console.clear();
+        let url = `${baseThreadsUrl}?q=${encodeURIComponent(q)}&maxResults=${maxResults}`;
 
-    // O filtro (q) continua o mesmo, ele funciona perfeitamente para threads
-    let url = `${baseThreadsUrl}?q=${encodeURIComponent(q)}&maxResults=${maxResults}`;
+        if (pageToken) {
+            url += `&pageToken=${pageToken}`;
+        }
 
-    if (pageToken) {
-        url += `&pageToken=${pageToken}`;
-    }
+        const result = await fetch(url, {
+            headers: { 'Authorization': `Bearer ${token}` }
+        });
 
-    const result = await fetch(url, {
-        headers: { 'Authorization': `Bearer ${token}` }
-    });
+        if (!result.ok) {
+            throw new Error(`Erro ao buscar threads: ${result.statusText}`);
+        }
 
-    const listThreads = await result.json();
+        const listThreads = await result.json();
 
-    if (!listThreads.threads) return { jobs: [], nextPageToken: null };
+        if (!listThreads.threads) return { jobs: [], nextPageToken: null };
 
-    console.log('listThreads:', listThreads);
+        // 2. Buscamos os detalhes de cada THREAD
+        const detailedThreads = await Promise.all(
+            listThreads.threads.map(async (thread: { id: string }) => {
+                const response = await fetch(`${baseThreadsUrl}/${thread.id}`, {
+                    headers: { 'Authorization': `Bearer ${token}` }
+                });
+                if (!response.ok) {
+                    throw new Error(`Erro ao buscar detalhes da thread ${thread.id}`);
+                }
+                return response.json();
+            })
+        );
 
-    // 2. Buscamos os detalhes de cada THREAD
-    const detailedThreads = await Promise.all(
-        listThreads.threads.map(async (thread: { id: string }) => {
-            const response = await fetch(`${baseThreadsUrl}/${thread.id}`, {
-                headers: { 'Authorization': `Bearer ${token}` }
-            });
-            return response.json();
-        })
-    );
+        // 3. Processamos as threads para pegar apenas a ÚLTIMA mensagem de cada uma
+        const jobsForAI = detailedThreads.map((thread: any) => {
+            const lastMessage = thread.messages[thread.messages.length - 1];
 
-    console.log('detailedThreads:', detailedThreads);
+            return {
+                id: lastMessage.id,
+                threadId: thread.id,
+                snippet: lastMessage.snippet,
+                content: extractEmailContent(lastMessage)
+            };
+        });
 
-    // 3. Processamos as threads para pegar apenas a ÚLTIMA mensagem de cada uma
-    const jobsForAI = detailedThreads.map((thread: any) => {
-        // A última mensagem da conversa é a que tem o status mais atualizado
-        const lastMessage = thread.messages[thread.messages.length - 1];
+        // 4. Filtramos conteúdos vazios antes de enviar para a IA
+        const validJobs = jobsForAI.filter(job => job.content.length > 0);
+
+        // 5. Chamada para a IA (Gemini) processar o lote
+        const processedResults = await processEmailsWithGemini(validJobs);
 
         return {
-            id: lastMessage.id, // ID da mensagem para a IA processar
-            threadId: thread.id, // Mantemos o ID da conversa para a UI
-            snippet: lastMessage.snippet,
-            content: extractEmailContent(lastMessage) // Sua função auxiliar de extração
+            jobs: processedResults,
+            nextPageToken: listThreads.nextPageToken || null
         };
-    });
-
-    console.log('jobsForAI:', jobsForAI);
-
-    // 4. Filtramos conteúdos vazios antes de enviar para a IA
-    const validJobs = jobsForAI.filter(job => job.content.length > 0);
-
-    console.log('validJobs:', validJobs);
-
-    // 5. Chamada para a IA (Gemini) processar o lote
-    const processedResults = await processEmailsWithGemini(validJobs);
-
-    return {
-        jobs: processedResults,
-        nextPageToken: listThreads.nextPageToken || null
-    };
+    } catch (error: any) {
+        console.error("Error in fetchJobApplications:", error);
+        throw new Error(error.message || "Falha ao carregar candidaturas do Gmail");
+    }
 }
 
 

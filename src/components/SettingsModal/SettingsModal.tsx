@@ -19,15 +19,25 @@ export const SettingsModal = ({ isOpen, onClose }: SettingsModalProps) => {
     }, [isOpen]);
 
     const handleSave = () => {
-        saveApiKey(tempKey);
-        setApiKey(tempKey);
-        onClose();
+        try {
+            saveApiKey(tempKey);
+            setApiKey(tempKey);
+            onClose();
+        } catch (error: any) {
+            console.error("Error saving API key:", error);
+            alert("Erro ao salvar a chave de API: " + (error.message || "Erro desconhecido"));
+        }
     };
 
     const handleRemove = () => {
-        removeApiKey();
-        setApiKey("");
-        setTempKey("");
+        try {
+            removeApiKey();
+            setApiKey("");
+            setTempKey("");
+        } catch (error: any) {
+            console.error("Error removing API key:", error);
+            alert("Erro ao remover a chave de API: " + (error.message || "Erro desconhecido"));
+        }
     };
 
     if (!isOpen) return null;
@@ -47,7 +57,7 @@ export const SettingsModal = ({ isOpen, onClose }: SettingsModalProps) => {
 
                 <div className="modal-action">
                     {apiKey && (
-                        <button className="btn btn-error" onClick={handleRemove}>Remover Chave</button>
+                        <button className="btn btn-error btn-soft mr-auto" onClick={handleRemove}>Remover Chave</button>
                     )}
                     <button className="btn mr-2" onClick={onClose}>Cancelar</button>
                     <button className="btn btn-primary" onClick={handleSave}>Salvar</button>

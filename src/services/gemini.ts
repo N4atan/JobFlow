@@ -100,7 +100,7 @@ export const processEmailsWithGemini = async (emailsContent: any[]) => {
         console.log(prompt);
 
         const resultAI = await ai.models.generateContent({
-            model: 'gemini-2.5-flash-lite',
+            model: 'gemini-2.0-flash-lite',
             contents: prompt,
         });
 
@@ -112,9 +112,9 @@ export const processEmailsWithGemini = async (emailsContent: any[]) => {
         const cleanText = text.replace(/```json/g, '').replace(/```/g, '').trim();
         return JSON.parse(cleanText);
 
-    } catch (error) {
+    } catch (error: any) {
         console.error("Error processing emails with Gemini:", error);
-        return [];
+        throw new Error(error.message || "Erro ao processar e-mails com a IA");
     }
 }
 

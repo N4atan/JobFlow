@@ -1,8 +1,8 @@
 // helpers/gmail-extractor.ts
 
-import type { GmailMessage } from "../services/interfaces/gmailMessages";
 
-export const extractEmailContent = (messageData: GmailMessage): string => {
+
+export const extractEmailContent = (messageData: any): string => {
     try {
         const payload = messageData.payload;
         const parts = payload?.parts || [];

@@ -3,26 +3,22 @@ import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { useAuth } from "../../contexts/AuthContext";
 import { faAddressCard, faArrowRightFromBracket, faGear } from "@fortawesome/free-solid-svg-icons";
 import { SettingsModal } from "../SettingsModal/SettingsModal";
+import { NavLink } from "react-router-dom";
 
 
 export const Header = () => {
-    const { user, signInWithGoogle, logOut } = useAuth();
+    const { user, logOut } = useAuth();
     const [isSettingsOpen, setIsSettingsOpen] = useState(false);
 
     return (
-        <div className="navbar bg-base-100 shadow-sm">
+        <div className="navbar bg-base-100 shadow-sm lg:px-5">
             <div className="flex-1">
-                <a className="btn btn-ghost text-xl">Job-Flow</a>
+                <NavLink to='/' className="btn btn-ghost text-xl">
+                    Job-Flow
+                </NavLink>
             </div>
 
-            {!user ? (
-                <a
-                    className="btn btn-outline text-lg"
-                    onClick={signInWithGoogle}
-                >
-                    Entrar
-                </a>
-            ) : (
+            {user && (
                 <div className="flex">
                     <div className="dropdown dropdown-end">
                         <div tabIndex={0} role="button" className="btn btn-ghost btn-circle avatar">
@@ -36,15 +32,17 @@ export const Header = () => {
                             tabIndex={-1}
                             className="menu dropdown-content bg-base-100 rounded-box z-1 mt-3 w-52 p-2 shadow">
                             <li>
-                                <a className="link link-hover cursor-pointer">
+                                
+
+                                <NavLink className="link link-hover cursor-pointer" to='/applications'>
                                     <FontAwesomeIcon icon={faAddressCard} />
-                                    Profile
-                                </a>
+                                    Candidaturas
+                                </NavLink>
                             </li>
                             <li>
                                 <a className="link link-hover cursor-pointer" onClick={() => setIsSettingsOpen(true)}>
                                     <FontAwesomeIcon icon={faGear} />
-                                    Settings
+                                    Geimini
                                 </a>
                             </li>
 
