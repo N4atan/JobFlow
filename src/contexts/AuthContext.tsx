@@ -18,6 +18,8 @@ export function AuthContextProvider({ children }: { children: ReactNode }) {
     const [loading, setLoading] = useState(true);
 
     useEffect(() => {
+        let unsubscribe: () => void; // Criar a variável fora
+
         async function initAuth() {
             setLoading(true);
             try {
@@ -36,8 +38,8 @@ export function AuthContextProvider({ children }: { children: ReactNode }) {
                 console.error("Erro no redirect:", error);
             }
     
-            // 2. Só depois de checar o redirect, começamos a ouvir o estado
-            const unsubscribe = onAuthStateChanged(auth, (currentUser) => {
+            // 2. Atribuir a subscrição à variável externa para o cleanup funcionar
+            unsubscribe = onAuthStateChanged(auth, (currentUser) => {
                 setUser(currentUser);
                 if (!currentUser) {
                     setAccessToken(null);
@@ -45,11 +47,14 @@ export function AuthContextProvider({ children }: { children: ReactNode }) {
                 }
                 setLoading(false); // Só libera o app aqui
             });
-    
-            return unsubscribe;
         }
     
         initAuth();
+
+        // O useEffect deve retornar uma função simples de limpeza
+        return () => {
+            if (unsubscribe) unsubscribe();
+        };
     }, []);
 
     const signInWithGoogle = async () => {
