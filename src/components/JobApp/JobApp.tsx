@@ -1,4 +1,4 @@
-import { faBuilding, faLocationDot, faMoneyBill, faCalendar } from "@fortawesome/free-solid-svg-icons"
+import { faBuilding, faLocationDot, faMoneyBill, faCalendar, faGlobe } from "@fortawesome/free-solid-svg-icons"
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome"
 
 type JobAppProps = {
@@ -59,12 +59,12 @@ export const JobApp = ({ job }: JobAppProps) => {
                         <span>Localização: {job.localizacao}</span>
                     </li>
                     <li>
-                        <FontAwesomeIcon icon={faMoneyBill} className="size-4 me-2 inline-block" />
-                        <span>Média Salarial: -</span>
+                        <FontAwesomeIcon icon={faGlobe} className="size-4 me-2 inline-block" />
+                        <span>Plataforma: {job.dominio}</span>
                     </li>
                     <li>
                         <FontAwesomeIcon icon={faCalendar} className="size-4 me-2 inline-block" />
-                        <span>Data da Candidatura: {job.data_iso}</span>
+                        <span>Data da Candidatura: {job.data_iso.split('-').reverse().join('/')}</span>
                     </li>
                 </ul>
 
