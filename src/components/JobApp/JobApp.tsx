@@ -1,4 +1,4 @@
-import { faBuilding, faLocationDot, faMoneyBill, faCalendar, faGlobe } from "@fortawesome/free-solid-svg-icons"
+import { faBuilding, faLocationDot, faCalendar, faGlobe } from "@fortawesome/free-solid-svg-icons"
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome"
 
 type JobAppProps = {
