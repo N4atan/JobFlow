@@ -1,5 +1,5 @@
 import { createContext, useContext, useEffect, useState, type ReactNode } from "react";
-import { signInWithPopup, signOut, onAuthStateChanged, type User, GoogleAuthProvider, signInWithRedirect, getRedirectResult } from "firebase/auth";
+import { signInWithPopup, signOut, onAuthStateChanged, type User, GoogleAuthProvider, signInWithRedirect, getRedirectResult, setPersistence, browserSessionPersistence } from "firebase/auth";
 import { auth, provider } from "../services/firebase";
 import { useNavigate } from "react-router-dom";
 
@@ -15,7 +15,7 @@ const AuthContext = createContext<AuthContextType>({} as AuthContextType);
 
 export function AuthContextProvider({ children }: { children: ReactNode }) {
     const [user, setUser] = useState<User | null>(null);
-    const [accessToken, setAccessToken] = useState<string | null>(() => localStorage.getItem("@jobflow:google-token"));
+    const [accessToken, setAccessToken] = useState<string | null>(() => sessionStorage.getItem("@jobflow:google-token"));
     const [loading, setLoading] = useState(true);
     const navigate = useNavigate();
 
@@ -62,6 +62,8 @@ export function AuthContextProvider({ children }: { children: ReactNode }) {
 
     const signInWithGoogle = async () => {
         try {
+            await setPersistence(auth, browserSessionPersistence);
+
             const isMobile = window.innerWidth <= 768; // Simple mobile check
 
             if (isMobile) {
@@ -74,7 +76,7 @@ export function AuthContextProvider({ children }: { children: ReactNode }) {
 
                 if (token) {
                     setAccessToken(token);
-                    localStorage.setItem("@jobflow:google-token", token);
+                    sessionStorage.setItem("@jobflow:google-token", token);
                 }
             }
         } catch (error: any) {
@@ -88,7 +90,7 @@ export function AuthContextProvider({ children }: { children: ReactNode }) {
     const logOut = async () => {
         try {
             await signOut(auth);
-            localStorage.removeItem("@jobflow:google-token");
+            sessionStorage.removeItem("@jobflow:google-token");
             setAccessToken(null);
             navigate('/', { replace: true })
         } catch (error: any) {
