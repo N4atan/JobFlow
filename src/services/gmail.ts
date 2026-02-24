@@ -23,7 +23,7 @@ const baseThreadsUrl = 'https://gmail.googleapis.com/gmail/v1/users/me/threads';
 
 export const fetchJobApplications = async (token: string, maxResults: number, pageToken?: string | null) => {
     try {
-        console.clear();
+
         let url = `${baseThreadsUrl}?q=${encodeURIComponent(q)}&maxResults=${maxResults}`;
 
         if (pageToken) {
@@ -79,7 +79,7 @@ export const fetchJobApplications = async (token: string, maxResults: number, pa
         };
     } catch (error: any) {
         console.error("Error in fetchJobApplications:", error);
-        throw new Error(error.message || "Falha ao carregar candidaturas do Gmail");
+        throw error;
     }
 }
 

@@ -18,6 +18,18 @@ export const removeApiKey = () => {
     localStorage.removeItem('@jobflow:gemini-key');
 };
 
+export const saveModel = (model: string) => {
+    localStorage.setItem('@jobflow:gemini-model', model);
+}
+
+export const getModel = () => {
+    return localStorage.getItem('@jobflow:gemini-model');
+}
+
+export const removeModel = () => {
+    localStorage.removeItem('@jobflow:gemini-model');
+}
+
 
 export const processEmailsWithGemini = async (emailsContent: any[]) => {
     if (!getApiKey()) {
@@ -26,6 +38,8 @@ export const processEmailsWithGemini = async (emailsContent: any[]) => {
 
     try {
         const ai = new GoogleGenAI({ apiKey: getApiKey()! });
+
+        const model = getModel() || 'gemini-2.5-flash';
 
         const prompt = `
     "Você é um assistente especializado em recrutamento e seleção. Abaixo, fornecerei um array de e-mails extraídos do Gmail.
@@ -97,15 +111,15 @@ export const processEmailsWithGemini = async (emailsContent: any[]) => {
     Array de e-mails para processar:
     [${JSON.stringify(emailsContent)}]"`
 
-        console.log(prompt);
+
 
         const resultAI = await ai.models.generateContent({
-            model: 'gemini-2.5-flash-lite',
+            model,
             contents: prompt,
         });
 
         const text = resultAI.text;
-        console.log("Gemini Response:", text);
+
 
         if (!text) return [];
 
@@ -114,7 +128,7 @@ export const processEmailsWithGemini = async (emailsContent: any[]) => {
 
     } catch (error: any) {
         console.error("Error processing emails with Gemini:", error);
-        throw new Error(error.message || "Erro ao processar e-mails com a IA");
+        throw error;
     }
 }
 
