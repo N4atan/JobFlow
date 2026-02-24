@@ -2,7 +2,7 @@ import { faBuilding, faLocationDot, faCalendar, faGlobe } from "@fortawesome/fre
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome"
 
 type JobAppProps = {
-    job: {
+    job: Partial<{
         id: string;
         empresa: string;
         cargo: string;
@@ -12,7 +12,7 @@ type JobAppProps = {
         data_iso: string;
         resumo: string;
         url: string;
-    }
+    }>
 }
 
 
@@ -34,7 +34,7 @@ export const JobApp = ({ job }: JobAppProps) => {
     }
 
     return (
-        <div className="card bg-base-100 w-96 shadow-sm">
+        <div className="card bg-base-100 w-full lg:w-96  shadow-sm h-60">
             <div className="card-body">
 
                 <div className="flex justify-between">
@@ -64,12 +64,12 @@ export const JobApp = ({ job }: JobAppProps) => {
                     </li>
                     <li>
                         <FontAwesomeIcon icon={faCalendar} className="size-4 me-2 inline-block" />
-                        <span>Data da Candidatura: {job.data_iso.split('-').reverse().join('/')}</span>
+                        <span>Data da Candidatura: {job.data_iso?.split('-').reverse().join('/')}</span>
                     </li>
                 </ul>
 
-                <div className="card-actions justify-end mt-4">
-                    <span className={`badge badge-soft ${getStatusColor(job.status)}`}>{job.status}</span>
+                <div className="card-actions justify-end mt-auto">
+                    <span className={`badge badge-soft ${getStatusColor(job.status!)}`}>{job.status}</span>
                 </div>
             </div>
         </div>

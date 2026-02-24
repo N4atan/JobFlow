@@ -5,6 +5,8 @@ import { fetchJobApplications } from "../../services/gmail";
 import { useEffect, useState } from "react";
 import { JobApp } from "../../components/JobApp/JobApp";
 import { getApiKey } from "../../services/gemini";
+import toast from "react-hot-toast";
+import { errorHandle } from "../../helpers/errorHandler";
 
 
 
@@ -12,7 +14,7 @@ export function PageApplications() {
     const { accessToken } = useAuth();
     const [jobs, setJobs] = useState([]);
     const [nextPageToken, setNextPageToken] = useState<string | null>(null);
-    const [loading, setLoading] = useState(false);
+    const [loading, setLoading] = useState(true);
     const [statusFilter, setStatusFilter] = useState("Todos");
 
 
@@ -40,7 +42,7 @@ export function PageApplications() {
 
         } catch (error) {
             console.error(error);
-            alert(error);
+            toast.error(errorHandle(error));
         } finally {
             setLoading(false);
         }
@@ -110,7 +112,7 @@ export function PageApplications() {
     return (
         <>
             <div className="flex gap-4 p-4 flex-wrap justify-between lg:w-10/12 lg:mx-auto">
-                <button className="btn btn-outline btn-primary" onClick={() => loadData(true)}>
+                <button className="btn btn-outline btn-primary" onClick={() => loadData(true)} disabled={loading}>
                     <FontAwesomeIcon icon={faRefresh} className="size-4 me-2 inline-block" />
                     Recarregar Vagas
                 </button>
@@ -120,6 +122,7 @@ export function PageApplications() {
                     value={statusFilter}
                     onChange={(e) => setStatusFilter(e.target.value)}
                     className="select select-bordered"
+                    disabled={loading}
                 >
                     <option value="Todos">Todos</option>
                     <option value="Candidatado">Candidatado</option>
@@ -137,8 +140,30 @@ export function PageApplications() {
             </div>
 
             {loading && (
-                <div className="flex justify-center p-4">
-                    <span className="loading loading-infinity loading-xl"></span>
+                <div className="flex flex-col justify-center p-4 gap-4 ">
+                    <span className="skeleton skeleton-text text-2xl text-center">AI is thinking harder... <span className="loading loading-infinity loading-xl skeleton"></span></span>
+                    
+
+                    <div className="flex gap-4 p-4 justify-center flex-wrap mb-8">
+                        <div className="flex w-96 flex-col gap-4">
+                            <div className="skeleton h-32 w-full"></div>
+                            <div className="skeleton h-4 w-28"></div>
+                            <div className="skeleton h-4 w-full"></div>
+                            <div className="skeleton h-4 w-full"></div>
+                        </div>
+                        <div className="flex w-96 flex-col gap-4">
+                            <div className="skeleton h-32 w-full"></div>
+                            <div className="skeleton h-4 w-28"></div>
+                            <div className="skeleton h-4 w-full"></div>
+                            <div className="skeleton h-4 w-full"></div>
+                        </div>
+                        <div className="flex w-96 flex-col gap-4">
+                            <div className="skeleton h-32 w-full"></div>
+                            <div className="skeleton h-4 w-28"></div>
+                            <div className="skeleton h-4 w-full"></div>
+                            <div className="skeleton h-4 w-full"></div>
+                        </div>
+                    </div>
                 </div>
             )}
 
