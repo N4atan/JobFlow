@@ -14,7 +14,7 @@ export function PageApplications() {
     const { accessToken } = useAuth();
     const [jobs, setJobs] = useState([]);
     const [nextPageToken, setNextPageToken] = useState<string | null>(null);
-    const [loading, setLoading] = useState(true);
+    const [loading, setLoading] = useState(false);
     const [statusFilter, setStatusFilter] = useState("Todos");
 
 
