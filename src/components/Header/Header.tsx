@@ -13,7 +13,12 @@ export const Header = () => {
     return (
         <div className="navbar bg-base-100 shadow-sm lg:px-5">
             <div className="flex-1">
-                <NavLink to='/' className="btn btn-ghost text-xl">
+                <NavLink to='/' className="btn btn-ghost text-xl ">
+                    <div className="avatar mr-2">
+                        <div className="h-8 rounded">
+                            <img src="./Logo.png" />
+                        </div>
+                    </div>
                     Job-Flow
                 </NavLink>
             </div>
@@ -32,7 +37,7 @@ export const Header = () => {
                             tabIndex={-1}
                             className="menu dropdown-content bg-base-100 rounded-box z-1 mt-3 w-52 p-2 shadow">
                             <li>
-                                
+
 
                                 <NavLink className="link link-hover cursor-pointer" to='/applications'>
                                     <FontAwesomeIcon icon={faAddressCard} />
