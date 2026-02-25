@@ -2,7 +2,7 @@
     "rewrites": [
       {
         "source": "/__/auth/:path*",
-        "destination": "https://job-flow-06.firebaseapp.com/__/auth/:path*"
+        "destination": "https://yourjobflow.vercel.app/__/auth/:path*"
       }
     ]
   }
