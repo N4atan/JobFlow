@@ -4,7 +4,6 @@ import { processEmailsWithGemini } from "./gemini";
 
 
 
-
 const q = '(' +
     'subject:("recebemos" OR "confirmada" OR "confirmamos" OR "sucesso" OR "inscrito" OR "recebido" OR "enviada") ' +
     'OR "agradecemos seu interesse"' +
@@ -21,7 +20,12 @@ const q = '(' +
 // 1. Mudamos o endpoint base para threads
 const baseThreadsUrl = 'https://gmail.googleapis.com/gmail/v1/users/me/threads';
 
-export const fetchJobApplications = async (token: string, maxResults: number, pageToken?: string | null) => {
+export const fetchJobApplications = async (
+    token: string | null,
+    maxResults: number,
+    pageToken: string | null = null,
+    refreshTokenSilently?: () => Promise<void>
+): Promise<any> => {
     try {
 
         let url = `${baseThreadsUrl}?q=${encodeURIComponent(q)}&maxResults=${maxResults}`;
@@ -35,6 +39,17 @@ export const fetchJobApplications = async (token: string, maxResults: number, pa
         });
 
         if (!result.ok) {
+            if (result.status === 401 && refreshTokenSilently) {
+                console.log("Token expired, refreshing...");
+                await refreshTokenSilently();
+                // O token novo deve vir via contexto, mas aqui para a recursão funcionar
+                // o ideal é que o refreshTokenSilently retorne o novo token ou que
+                // busquemos ele novamente se for atualizado no storage.
+                // Mas geralmente, recarregar a página ou disparar o loadData novamente é mais seguro.
+                throw new Error("401");
+            }
+
+            console.error("Erro ao buscar threads:", result);
             throw new Error(`Erro ao buscar threads: ${result.statusText}`);
         }
 
@@ -71,19 +86,26 @@ export const fetchJobApplications = async (token: string, maxResults: number, pa
         const validJobs = jobsForAI.filter(job => job.content.length > 0);
 
         // 5. Chamada para a IA (Gemini) processar o lote
-        const processedResults = await processEmailsWithGemini(validJobs);
+        let processedResults = [];
+        try {
+            processedResults = await processEmailsWithGemini(validJobs);
+        } catch (geminiError: any) {
+            console.error("Gemini failed inside gmail service:", geminiError);
+            // Adiciona uma flag para o componente saber que o erro foi no Gemini
+            geminiError.isGeminiError = true;
+            throw geminiError;
+        }
 
         return {
             jobs: processedResults,
             nextPageToken: listThreads.nextPageToken || null
         };
     } catch (error: any) {
+        if (error.isGeminiError) throw error; // Re-throw Gemini errors
+
         console.error("Error in fetchJobApplications:", error);
         throw error;
     }
 }
-
-
-
 
 

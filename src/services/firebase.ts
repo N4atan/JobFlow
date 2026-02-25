@@ -23,3 +23,7 @@ export const analytics = getAnalytics(app);
 export const auth = getAuth(app);
 export const provider = new GoogleAuthProvider();
 provider.addScope('https://www.googleapis.com/auth/gmail.readonly');
+provider.setCustomParameters({
+    prompt: 'select_account',
+    access_type: 'offline'
+});

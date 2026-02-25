@@ -3,13 +3,16 @@ import { createBrowserRouter, Outlet, Navigate } from "react-router-dom";
 import { PageApplications } from "../pages/Applications/Applications";
 import PageHome from "../pages/Home/Home";
 import { AuthContextProvider, useAuth } from "../contexts/AuthContext";
+import { JobContextProvider } from "../contexts/JobContext";
 import { Header } from "../components/Header/Header";
 
 const RootLayout = () => {
     return (
         <AuthContextProvider>
-            <Header />
-            <Outlet />
+            <JobContextProvider>
+                <Header />
+                <Outlet />
+            </JobContextProvider>
         </AuthContextProvider>
     )
 }

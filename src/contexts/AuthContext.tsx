@@ -2,6 +2,7 @@ import { createContext, useContext, useEffect, useState, type ReactNode } from "
 import { signInWithPopup, signOut, onAuthStateChanged, type User, GoogleAuthProvider, signInWithRedirect, getRedirectResult, setPersistence, browserSessionPersistence } from "firebase/auth";
 import { auth, provider } from "../services/firebase";
 import { useNavigate } from "react-router-dom";
+import toast from "react-hot-toast";
 
 interface AuthContextType {
     user: User | null;
@@ -9,6 +10,7 @@ interface AuthContextType {
     logOut: () => Promise<void>;
     loading: boolean;
     accessToken: string | null;
+    refreshTokenSilently: () => Promise<void>;
 }
 
 const AuthContext = createContext<AuthContextType>({} as AuthContextType);
@@ -16,7 +18,7 @@ const AuthContext = createContext<AuthContextType>({} as AuthContextType);
 export function AuthContextProvider({ children }: { children: ReactNode }) {
     const [user, setUser] = useState<User | null>(null);
     const [accessToken, setAccessToken] = useState<string | null>(() => sessionStorage.getItem("@jobflow:google-token"));
-    const [loading, setLoading] = useState(true);
+    const [loading, setLoading] = useState(false);
     const navigate = useNavigate();
 
     useEffect(() => {
@@ -83,7 +85,7 @@ export function AuthContextProvider({ children }: { children: ReactNode }) {
             console.error("Error signing in with Google", error);
             const message = error.message || "Erro ao entrar com o Google";
             alert(message);
-            throw new Error(message);
+            toast.error("Erro ao entrar com o Google");
         }
     };
 
@@ -97,12 +99,21 @@ export function AuthContextProvider({ children }: { children: ReactNode }) {
             console.error("Error signing out", error);
             const message = error.message || "Erro ao sair";
             alert(message);
-            throw new Error(message);
+            toast.error("Erro ao sair");
         }
     };
 
+    const refreshTokenSilently = async () => {
+        try {
+            await signInWithGoogle();
+        } catch (error) {
+            console.error(error);
+            throw error;
+        }
+    }
+
     return (
-        <AuthContext.Provider value={{ user, signInWithGoogle, logOut, loading, accessToken }}>
+        <AuthContext.Provider value={{ user, signInWithGoogle, logOut, refreshTokenSilently, loading, accessToken }}>
             {children}
         </AuthContext.Provider>
     );
