@@ -8,6 +8,9 @@ export function App() {
             <Toaster
                 position="bottom-right"
                 reverseOrder={true}
+                toastOptions={{
+                    duration: 5000,
+                }}
             />
 
             <RouterProvider router={router} />

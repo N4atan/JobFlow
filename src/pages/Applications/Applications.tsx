@@ -1,20 +1,18 @@
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faRefresh } from "@fortawesome/free-solid-svg-icons";
-import { useAuth } from "../../contexts/AuthContext";
-import { fetchJobApplications } from "../../services/gmail";
 import { useEffect, useState } from "react";
 import { JobApp } from "../../components/JobApp/JobApp";
 import { getApiKey } from "../../services/gemini";
-import toast from "react-hot-toast";
-import { errorHandle } from "../../helpers/errorHandler";
+import { useJob } from "../../contexts/JobContext";
+import { useAuth } from "../../contexts/AuthContext";
 
 
 
 export function PageApplications() {
+  
+    const { jobs, loadJobs, loading } = useJob();
     const { accessToken } = useAuth();
-    const [jobs, setJobs] = useState([]);
-    const [nextPageToken, setNextPageToken] = useState<string | null>(null);
-    const [loading, setLoading] = useState(false);
+ 
     const [statusFilter, setStatusFilter] = useState("Todos");
 
 
@@ -23,30 +21,7 @@ export function PageApplications() {
         return job.status === statusFilter;
     });
 
-    const loadData = async (reset: boolean = false) => {
-        try {
-            if (!accessToken) return;
-            setLoading(true);
-
-            const tokenToUse = reset ? null : nextPageToken;
-
-            if (reset) {
-                setJobs([]);
-                setNextPageToken(null);
-            }
-
-            const data = await fetchJobApplications(accessToken, 30, tokenToUse);
-
-            setJobs(prev => reset ? (data.jobs || []) : [...prev, ...(data.jobs || [])]);
-            setNextPageToken(data.nextPageToken);
-
-        } catch (error) {
-            console.error(error);
-            toast.error(errorHandle(error));
-        } finally {
-            setLoading(false);
-        }
-    }
+ 
 
     if (!getApiKey()) {
         return (
@@ -103,16 +78,13 @@ export function PageApplications() {
     }
 
     useEffect(() => {
-        loadData(true);
+        loadJobs(true);
     }, [accessToken]);
-
-
-
 
     return (
         <>
             <div className="flex gap-4 p-4 flex-wrap justify-between lg:w-10/12 lg:mx-auto">
-                <button className="btn btn-outline btn-primary" onClick={() => loadData(true)} disabled={loading}>
+                <button className="btn btn-outline btn-primary" onClick={() => loadJobs(true)} disabled={loading}>
                     <FontAwesomeIcon icon={faRefresh} className="size-4 me-2 inline-block" />
                     Recarregar Vagas
                 </button>
@@ -142,7 +114,7 @@ export function PageApplications() {
             {loading && (
                 <div className="flex flex-col justify-center p-4 gap-4 ">
                     <span className="skeleton skeleton-text text-2xl text-center">AI is thinking harder... <span className="loading loading-infinity loading-xl skeleton"></span></span>
-                    
+
 
                     <div className="flex gap-4 p-4 justify-center flex-wrap mb-8">
                         <div className="flex w-96 flex-col gap-4">
@@ -167,9 +139,9 @@ export function PageApplications() {
                 </div>
             )}
 
-            {!loading && nextPageToken && (
+            {!loading && jobs.length > 0 && (
                 <div className="flex justify-center p-4 pb-10">
-                    <button className="btn btn-wide btn-primary" onClick={() => loadData(false)}>
+                    <button className="btn btn-wide btn-primary" onClick={() => loadJobs()}>
                         Carregar Mais
                     </button>
                 </div>
