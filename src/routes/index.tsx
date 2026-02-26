@@ -29,7 +29,7 @@ const ProtectedRoute = ({ children }: { children: React.ReactNode }) => {
     }
 
     if (!agreed) {
-        return <Navigate to="/privacy" replace />;
+        return <Navigate to="/privacy" replace state={{ redirection: true}}/>;
     }
 
     return <>{children}</>;
