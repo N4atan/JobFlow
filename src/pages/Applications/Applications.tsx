@@ -21,7 +21,7 @@ export function PageApplications() {
         return job.status === statusFilter;
     });
 
- 
+
 
     if (!getApiKey()) {
         return (

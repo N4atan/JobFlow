@@ -12,12 +12,13 @@ export default function PageHome() {
     <main className="hero bg-base-100 min-h-screen p-4 lg:p-10 fundo-quadriculado">
       <div className="hero-content flex-col gap-8 lg:gap-16">
         <div className="w-full lg:w-11/12 text-center lg:p-10">
-          <h1 className="text-5xl font-bold ">
+          <h1 className="text-6xl font-bold uppercase tracking-tighter italic">
             Transforme seu Gmail no seu Dashboard de Vagas.
           </h1>
 
           <p className="text-lg my-5">
-            O JobFlow utiliza inteligência artificial para minerar automaticamente suas candidaturas no e-mail, organizando status, empresas e feedbacks em um só lugar. Chega de planilhas manuais.
+            O JobFlow utiliza inteligência artificial para minerar automaticamente suas
+            candidaturas no e-mail, organizando status, empresas e feedbacks em um só lugar.
           </p>
 
           {!user ? (
@@ -36,7 +37,7 @@ export default function PageHome() {
           )}
         </div>
 
-      
+
 
         <div className="mockup-browser border border-base-300 bg-base-100 shadow-2xl w-full lg:w-11/12 shadow-md">
           <div className="mockup-browser-toolbar border-b-1 border-base-300 pb-4">
@@ -49,7 +50,7 @@ export default function PageHome() {
             </div>
             <div className="grid grid-cols-1 md:grid-cols-2 gap-5 justify-items-center px-1 lg:px-0">
               {/* Card Simulado 1 */}
-              <JobApp job={{cargo: "Desenvolvedor Web", empresa: "Google", dominio: "google.com", status: "Entrevista", data_iso: `${new Date().toISOString().split('T')[0]}`, localizacao: "Remoto", url: "/"}} />
+              <JobApp job={{ cargo: "Desenvolvedor Web", empresa: "Google", dominio: "google.com", status: "Entrevista", data_iso: `${new Date().toISOString().split('T')[0]}`, localizacao: "Remoto", url: "/" }} />
               {/* Card Simulado 2 com Skeleton (dá um ar de "carregando dados") */}
               <div className="skeleton h-60 w-full lg:w-96"></div>
               <div className="skeleton h-60 w-full lg:w-96 hidden lg:block"></div>
@@ -57,7 +58,7 @@ export default function PageHome() {
             </div>
           </div>
         </div>
-        
+
       </div>
     </main>
 

@@ -1,5 +1,6 @@
 import { useState, useEffect } from "react";
 import { getApiKey, saveApiKey, removeApiKey, getModel, saveModel } from "../../services/gemini";
+import { Link } from "react-router-dom";
 
 interface SettingsModalProps {
     isOpen: boolean;
@@ -14,6 +15,8 @@ export const SettingsModal = ({ isOpen, onClose }: SettingsModalProps) => {
     const [agreed, setAgreed] = useState(false);
     const [tempAgreed, setTempAgreed] = useState(false);
 
+    
+
     useEffect(() => {
         if (isOpen) {
             const currentKey = getApiKey() || "";
@@ -22,6 +25,8 @@ export const SettingsModal = ({ isOpen, onClose }: SettingsModalProps) => {
             setTempKey(currentKey);
             setModel(currentModel);
             setTempModel(currentModel);
+            setAgreed(localStorage.getItem("@jobflow:agreed") === "true");
+            setTempAgreed(localStorage.getItem("@jobflow:agreed") === "true");
         }
     }, [isOpen]);
 
@@ -32,7 +37,7 @@ export const SettingsModal = ({ isOpen, onClose }: SettingsModalProps) => {
             saveModel(tempModel);
             setModel(tempModel);
             setAgreed(tempAgreed);
-            localStorage.setItem("@jobflow:agreed", tempAgreed.toString());
+            localStorage.setItem("@jobflow:agreed", agreed.toString());
             onClose();
             window.location.reload();
         } catch (error: any) {
@@ -64,7 +69,7 @@ export const SettingsModal = ({ isOpen, onClose }: SettingsModalProps) => {
                 <div className="py-4">
                     <label className="label">
                         <input type="checkbox" className="checkbox" checked={tempAgreed} onChange={(e) => setTempAgreed(e.target.checked)} />
-                        Autorizo o processamento de e-mails via IA conforme os termos.
+                        Autorizo o processamento de e-mails via IA conforme os<Link to="/privacy" className="link link-primary" onClick={() => onClose()}> termos.</Link>
                     </label>
 
                     <fieldset className="fieldset" disabled={!tempAgreed}>
