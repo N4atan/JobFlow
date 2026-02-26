@@ -5,6 +5,7 @@ import PageHome from "../pages/Home/Home";
 import { AuthContextProvider, useAuth } from "../contexts/AuthContext";
 import { JobContextProvider } from "../contexts/JobContext";
 import { Header } from "../components/Header/Header";
+import { PrivacyPage } from '../pages/Privacy/Privacy'
 
 const RootLayout = () => {
     return (
@@ -19,11 +20,16 @@ const RootLayout = () => {
 
 const ProtectedRoute = ({ children }: { children: React.ReactNode }) => {
     const { user, loading } = useAuth();
+    const agreed = localStorage.getItem("@jobflow:agreed");
 
     if (loading) return null; // Or a loading spinner
 
     if (!user) {
         return <Navigate to="/" replace />;
+    }
+
+    if (!agreed) {
+        return <Navigate to="/privacy" replace />;
     }
 
     return <>{children}</>;
@@ -49,6 +55,10 @@ export const router = createBrowserRouter([
             {
                 path: '*',
                 element: <Navigate to="/" replace />
+            },
+            {
+                path: '/privacy',
+                element: <PrivacyPage />
             }
         ]
     }

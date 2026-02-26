@@ -11,6 +11,8 @@ export const SettingsModal = ({ isOpen, onClose }: SettingsModalProps) => {
     const [model, setModel] = useState(getModel() || "gemini-1.5-flash");
     const [tempKey, setTempKey] = useState(apiKey);
     const [tempModel, setTempModel] = useState(model);
+    const [agreed, setAgreed] = useState(false);
+    const [tempAgreed, setTempAgreed] = useState(false);
 
     useEffect(() => {
         if (isOpen) {
@@ -29,6 +31,8 @@ export const SettingsModal = ({ isOpen, onClose }: SettingsModalProps) => {
             setApiKey(tempKey);
             saveModel(tempModel);
             setModel(tempModel);
+            setAgreed(tempAgreed);
+            localStorage.setItem("@jobflow:agreed", tempAgreed.toString());
             onClose();
             window.location.reload();
         } catch (error: any) {
@@ -58,7 +62,12 @@ export const SettingsModal = ({ isOpen, onClose }: SettingsModalProps) => {
                 <h3 className="font-bold text-lg">Configurações do Gemini</h3>
 
                 <div className="py-4">
-                    <fieldset className="fieldset">
+                    <label className="label">
+                        <input type="checkbox" className="checkbox" checked={tempAgreed} onChange={(e) => setTempAgreed(e.target.checked)} />
+                        Autorizo o processamento de e-mails via IA conforme os termos.
+                    </label>
+
+                    <fieldset className="fieldset" disabled={!tempAgreed}>
                         <legend className="fieldset-legend">Gemini API Key</legend>
                         <input type="text" className="input w-full" placeholder="Cole sua API Key aqui" value={tempKey} onChange={(e) => setTempKey(e.target.value)} />
                         <p className="label break-words whitespace-pre-wrap">
@@ -66,7 +75,7 @@ export const SettingsModal = ({ isOpen, onClose }: SettingsModalProps) => {
                         </p>
                     </fieldset>
 
-                    <fieldset className="fieldset">
+                    <fieldset className="fieldset" disabled={!tempAgreed}>
                         <legend className="fieldset-legend">Modelo do Gemini</legend>
                         <select value={tempModel} className="select w-full" onChange={(e) => setTempModel(e.target.value)}>
                             <option value={'gemini-2.5-flash-lite'}>gemini-2.5-flash-lite</option>
