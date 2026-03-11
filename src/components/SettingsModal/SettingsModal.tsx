@@ -12,7 +12,7 @@ export const SettingsModal = ({ isOpen, onClose }: SettingsModalProps) => {
     const [model, setModel] = useState(getModel() || "gemini-1.5-flash");
     const [tempKey, setTempKey] = useState(apiKey);
     const [tempModel, setTempModel] = useState(model);
-    const [agreed, setAgreed] = useState(false);
+    
     const [tempAgreed, setTempAgreed] = useState(false);
 
     
@@ -25,7 +25,7 @@ export const SettingsModal = ({ isOpen, onClose }: SettingsModalProps) => {
             setTempKey(currentKey);
             setModel(currentModel);
             setTempModel(currentModel);
-            setAgreed(localStorage.getItem("@jobflow:agreed") === "true");
+            
             setTempAgreed(localStorage.getItem("@jobflow:agreed") === "true");
         }
     }, [isOpen]);
@@ -36,7 +36,6 @@ export const SettingsModal = ({ isOpen, onClose }: SettingsModalProps) => {
             setApiKey(tempKey);
             saveModel(tempModel);
             setModel(tempModel);
-            setAgreed(tempAgreed);
             localStorage.setItem("@jobflow:agreed", tempAgreed.toString());
             onClose();
             window.location.reload();
