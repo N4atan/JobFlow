@@ -37,7 +37,7 @@ export const SettingsModal = ({ isOpen, onClose }: SettingsModalProps) => {
             saveModel(tempModel);
             setModel(tempModel);
             setAgreed(tempAgreed);
-            localStorage.setItem("@jobflow:agreed", agreed.toString());
+            localStorage.setItem("@jobflow:agreed", tempAgreed.toString());
             onClose();
             window.location.reload();
         } catch (error: any) {
