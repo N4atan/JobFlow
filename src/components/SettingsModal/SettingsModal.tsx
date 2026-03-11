@@ -20,7 +20,7 @@ export const SettingsModal = ({ isOpen, onClose }: SettingsModalProps) => {
     useEffect(() => {
         if (isOpen) {
             const currentKey = getApiKey() || "";
-            const currentModel = getModel() || "gemini-1.5-flash";
+            const currentModel = getModel() || "gemini-2.5-flash-lite";
             setApiKey(currentKey);
             setTempKey(currentKey);
             setModel(currentModel);
